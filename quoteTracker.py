@@ -27,16 +27,24 @@ def main():
 	ts_dict = {}
 	for symbol in ts:
 			stock = Stock.Stock(symbol, 0.0, 0.0)
+			print(stock.get_symbol())
 			stock.scrape()
 			time.sleep(interval)
 			stock.update()
 			ts_dict[symbol] = stock
 			delta = stock.get_delta()
+			print(delta)
+			delta_close = stock.get_delta_close()
+			print(delta_close)
 			# Add onto GUI: Stock symbol on one side, and delta with red down/green up arrow on other side
-
+	
 	while (True): # Implement "stop" button
+		time.sleep(interval)
+		print(time.localtime())
 		for symbol in ts_dict:
 			ts_dict[symbol].update()
+			print(ts_dict[symbol].get_delta())
+			print(ts_dict[symbol].get_delta_close())
 			update_buttons() # If prev>curr show red, if prev<curr show green, if prev=curr show = sign
 		if (flag):
 			break
