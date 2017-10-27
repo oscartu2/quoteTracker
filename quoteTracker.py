@@ -2,6 +2,7 @@
 #import tkMessageBox
 import Stock
 import time
+import datetime
 
 
 def refresh(interval):
@@ -17,7 +18,7 @@ def draw():
 	print("test draw")
 
 def update_buttons():
-	print("update btutons")
+	print("update buttons")
 
 def main():
 	flag = False
@@ -33,14 +34,14 @@ def main():
 			stock.update()
 			ts_dict[symbol] = stock
 			delta = stock.get_delta()
-			print(delta)
+			print("Delta from last time we displayed: ", delta)
 			delta_close = stock.get_delta_close()
-			print(delta_close)
+			print("Delta from previous close: ", delta_close)
 			# Add onto GUI: Stock symbol on one side, and delta with red down/green up arrow on other side
 	
 	while (True): # Implement "stop" button
 		time.sleep(interval)
-		print(time.localtime())
+		print('The current time is: ' + str(datetime.datetime.now().time()) + '\n')
 		for symbol in ts_dict:
 			ts_dict[symbol].update()
 			print(ts_dict[symbol].get_delta())
