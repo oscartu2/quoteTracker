@@ -9,13 +9,16 @@ class Stock():
 		self.previous_price = previous_price
 		self.current_price = current_price
 		self.symbol = symbol
-		self.page = requests.get('https://finance.google.ca/finance?q=' + str(self.symbol))
+		self.link = 'https://ca.finance.yahoo.com/chart/' + str(self.symbol)
+		self.page = requests.get(self.link)
 		self.tree = html.fromstring(self.page.content)
 		
 	def scrape(self):
-
-		self.current_price = self.tree.xpath('//*[@id="ref_22144_l"]/text()') # Can't get "current" but can get the one beside it
-		self.current_price = float(self.current_price[0])
+		print("self.link", self.link)
+		self.current_price = self.tree.xpath('//*[@id="chart-header"]/div[2]/div[2]/div/span[1]/text()') # Can't get "current" but can get the one beside it
+		print("Before converting to list [0]: ", self.current_price)
+		
+		self.current_price = float(self.current_price[0].replace(',',''))
 		print("Current price: ", self.current_price)
 		return self.current_price
 
@@ -29,11 +32,14 @@ class Stock():
 		return self.current_price - self.previous_price
 
 	def get_delta_close(self):
-		d_close_dollar = self.tree.xpath('//*[@id="ref_22144_c"]/text()') # Where "current price" should be it is this
-		d_close_dollar = d_close_dollar[0]
-		d_close_percent = self.tree.xpath('//*[@id="ref_22144_cp"]/text()')
-		d_close_percent = d_close_percent[0]
-		return str(d_close_dollar) + ", " + str(d_close_percent)
+
+		d_close = self.tree.xpath('//*[@id="chart-header"]/div[2]/div[2]/div/span[2]/text()') # Where "current price" should be it is this
+		if (len(d_close) > 1):
+			return d_close[1]
+		else:
+			return d_close[0]
+
+		return str(d_close[1])
 
 	def get_symbol(self):
 		return self.symbol

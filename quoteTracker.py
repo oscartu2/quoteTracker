@@ -28,6 +28,7 @@ def main():
 	ts_dict = {}
 	for symbol in ts:
 			stock = Stock.Stock(symbol, 0.0, 0.0)
+			print("stock")
 			print(stock.get_symbol())
 			stock.scrape()
 			time.sleep(interval)
