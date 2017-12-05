@@ -18,7 +18,7 @@ def draw():
 	print("test draw")
 
 def update_buttons():
-	print("update buttons")
+	print("update buttons\n")
 
 def main():
 	flag = False
@@ -27,26 +27,26 @@ def main():
 	ts = ticket_symbols.strip().split(",")
 	ts_dict = {}
 	for symbol in ts:
-			print("Symbol before replace: ", symbol)
-			symbol.replace(' ', '')
-			print("Symbol after replace: ", symbol)
 			stock = Stock.Stock(symbol, 0.0, 0.0)
 			stock.scrape()
 			time.sleep(interval)
 			stock.update()
 			ts_dict[symbol] = stock
 			delta = stock.get_delta()
+			print("Initializing stock: ", stock.get_stock_name())
 			print("Delta from last time we displayed: ", delta)
 			delta_close = stock.get_delta_close()
 			print("Delta from previous close: ", delta_close)
 			# Add onto GUI: Stock symbol on one side, and delta with red down/green up arrow on other side
+
 	while (True): # Implement "stop" button
 		time.sleep(interval)
-		print('The current time is: ' + str(datetime.datetime.now().time()) + '\n')
+		print('\nThe current time is: ' + str(datetime.datetime.now().time()) + '\n')
 		for symbol in ts_dict:
 			ts_dict[symbol].update()
-			print(ts_dict[symbol].get_delta())
-			print(ts_dict[symbol].get_delta_close())
+			print("Stock: ", ts_dict[symbol].get_stock_name())
+			print("Delta display: " + str(ts_dict[symbol].get_delta()))
+			print("Delta close: " + str(ts_dict[symbol].get_delta_close()))
 			update_buttons() # If prev>curr show red, if prev<curr show green, if prev=curr show = sign
 		if (flag):
 			break
