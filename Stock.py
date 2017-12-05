@@ -8,7 +8,7 @@ class Stock():
 
 		self.previous_price = previous_price
 		self.current_price = current_price
-		self.symbol = symbol
+		self.symbol = symbol.strip()
 		self.link = 'https://ca.finance.yahoo.com/chart/' + str(self.symbol)
 		self.page = requests.get(self.link)
 		self.tree = html.fromstring(self.page.content)

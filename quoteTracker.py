@@ -1,4 +1,4 @@
-#import Tkinter
+import tkinter
 #import tkMessageBox
 import Stock
 import time
@@ -27,9 +27,10 @@ def main():
 	ts = ticket_symbols.strip().split(",")
 	ts_dict = {}
 	for symbol in ts:
+			print("Symbol before replace: ", symbol)
+			symbol.replace(' ', '')
+			print("Symbol after replace: ", symbol)
 			stock = Stock.Stock(symbol, 0.0, 0.0)
-			print("stock")
-			print(stock.get_symbol())
 			stock.scrape()
 			time.sleep(interval)
 			stock.update()
@@ -39,7 +40,6 @@ def main():
 			delta_close = stock.get_delta_close()
 			print("Delta from previous close: ", delta_close)
 			# Add onto GUI: Stock symbol on one side, and delta with red down/green up arrow on other side
-	
 	while (True): # Implement "stop" button
 		time.sleep(interval)
 		print('The current time is: ' + str(datetime.datetime.now().time()) + '\n')
