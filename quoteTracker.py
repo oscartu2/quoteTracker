@@ -23,28 +23,36 @@ class Tracker():
 		self.stocks_list_entry = self.stocks_list_init(self.stocks_list)
 		Label(self.root, text="List of stocks").grid(row=4, column=0)
 
-		self.init_stock_space(6, "Initialized stocks will go here")
-		self.init_current_price(6, "0.0")
-		self.init_delta_price(6, "0.0")
+		
+		self.stock_space = StringVar()
+		self.stock_disp = Label(self.root, textvariable=self.stock_space)
+		self.stock_disp.grid(row=6, column=0)
+
+		self.current_price = StringVar()
+		self.current_disp = Label(self.root, text="Current Price")
+		self.current_disp.grid(row=6, column=1)
+
+		self.delta_price = StringVar()
+		self.delta_disp = Label(self.root, text="Delta Price")
+		self.delta_disp.grid(row=6, column=2)
+		
 
 		self.begin_button = self.begin_button_init()
 
 	def init_stock_space(self, row_number, name):
 		self.stock_space = StringVar()
-		self.stock_disp = Label(self.root, text=name, height=1, width=15)
-		self.stock_disp.grid(row=row_number, column=0, columnspan=2)
+		self.stock_disp = Label(self.root, textvariable=self.stock_space, height=1, width=15)
+		self.stock_disp.grid(row=row_number, column=0, columnspan=1)
 
 	def init_current_price(self, row_number, price):
 		self.current_price = StringVar()
-		self.current_price.set(price)
-		self.current_disp = Label(self.root, textvariable='Current Price: ' + str(price), height=1, width=15)
-		self.current_disp.grid(row=row_number, column=0, columnspan=2)
+		self.current_disp = Label(self.root, textvariable='Current Price: ' + str(self.current_price), height=1, width=15)
+		self.current_disp.grid(row=row_number+1, column=1, columnspan=1)
 	
 	def init_delta_price(self, row_number, price):
 		self.delta_price = StringVar()
-		self.delta_price.set(price)
-		self.delta_disp = Label(self.root, textvariable='Delta Price: ' + str(price), height=1, width=15)
-		self.delta_disp.grid(row=row_number, column=0, columnspan=2)
+		self.delta_disp = Label(self.root, textvariable='Delta Price: ' + str(self.delta_price), height=1, width=15)
+		self.delta_disp.grid(row=row_number+2, column=2, columnspan=1)
 		
 	
 
@@ -67,7 +75,7 @@ class Tracker():
 
 	def begin_button_init(self):
 		button = Button(self.root, text="$$$", command=lambda: self.start())
-		button.grid(row=10, columnspan=2)
+		button.grid(row=12, columnspan=2)
 		return button
 
 
@@ -89,11 +97,11 @@ class Tracker():
 				stock.scrape()
 				ts_dict[symbol] = stock
 				self.init_stock_space(count, stock.get_stock_name())
-				#self.stock_space.set(stock.get_stock_name())
+				self.stock_space.set(stock.get_stock_name())
 				self.init_current_price(count, stock.get_current_price())
-				#self.current_price.set(stock.get_current_price())
+				self.current_price.set(stock.get_current_price())
 				self.init_delta_price(count, '0.0')
-				#self.delta_price.set('0.0')
+				self.delta_price.set('0.0')
 				self.root.update()
 				# Add onto GUI: Stock symbol on one side, and delta with red down/green up arrow on other side
 
@@ -104,6 +112,8 @@ class Tracker():
 			self.write_to_time_window(str(datetime.datetime.now().time()))
 			for symbol in ts_dict:
 				ts_dict[symbol].update()
+				self.current_price.set(stock.get_current_price())
+				self.delta_price.set(stock.get_delta())
 
 				self.root.update()
 				print("Stock: ", ts_dict[symbol].get_stock_name())
