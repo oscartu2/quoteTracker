@@ -17,24 +17,24 @@ class Tracker():
 		self.market_list_var = StringVar()
 		self.market_list_var.set(self.markets[0])
 		self.market_list = self.market_list_init(self.market_list_var, self.markets)
-		Label(self.root, text="Select a market: ").grid(row=1, column=0)
+		Label(self.root, text="Select a market: ").grid(row=1, column=0, sticky=E)
 
 		self.stocks_list = StringVar()
 		self.stocks_list_entry = self.stocks_list_init(self.stocks_list)
-		Label(self.root, text="List of stocks").grid(row=4, column=0)
+		Label(self.root, text="List of stocks").grid(row=4, column=0, sticky=E)
 
 		
 		self.stock_space = StringVar()
 		self.stock_disp = Label(self.root, textvariable=self.stock_space)
-		self.stock_disp.grid(row=6, column=0)
+		self.stock_disp.grid(row=6, column=0, sticky=E)
 
 		self.current_price = StringVar()
-		self.current_disp = Label(self.root, text="Current Price")
-		self.current_disp.grid(row=6, column=1)
+		self.current_disp = Label(self.root, textvariable=self.current_price)
+		self.current_disp.grid(row=6, column=1, sticky=E)
 
 		self.delta_price = StringVar()
-		self.delta_disp = Label(self.root, text="Delta Price")
-		self.delta_disp.grid(row=6, column=2)
+		self.delta_disp = Label(self.root, textvariable=self.delta_price)
+		self.delta_disp.grid(row=6, column=2, sticky=E)
 		
 
 		self.begin_button = self.begin_button_init()
@@ -42,17 +42,17 @@ class Tracker():
 	def init_stock_space(self, row_number, name):
 		self.stock_space = StringVar()
 		self.stock_disp = Label(self.root, textvariable=self.stock_space, height=1, width=15)
-		self.stock_disp.grid(row=row_number, column=0, columnspan=1)
+		self.stock_disp.grid(row=row_number, column=0, columnspan=1, sticky=E)
 
 	def init_current_price(self, row_number, price):
 		self.current_price = StringVar()
-		self.current_disp = Label(self.root, textvariable='Current Price: ' + str(self.current_price), height=1, width=15)
-		self.current_disp.grid(row=row_number+1, column=1, columnspan=1)
+		self.current_disp = Label(self.root, textvariable=self.current_price, height=1, width=15)
+		self.current_disp.grid(row=row_number, column=1, columnspan=1)
 	
 	def init_delta_price(self, row_number, price):
 		self.delta_price = StringVar()
-		self.delta_disp = Label(self.root, textvariable='Delta Price: ' + str(self.delta_price), height=1, width=15)
-		self.delta_disp.grid(row=row_number+2, column=2, columnspan=1)
+		self.delta_disp = Label(self.root, textvariable=self.delta_price, height=1, width=15)
+		self.delta_disp.grid(row=row_number, column=2, columnspan=1)
 		
 	
 
