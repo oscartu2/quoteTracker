@@ -4,8 +4,8 @@ import requests
 
 class Stock():
 	
-	def __init__(self, symbol, previous_price, current_price):
-
+	def __init__(self, symbol, previous_price, current_price, program_type):
+		self.program_type = program_type
 		self.previous_price = previous_price
 		self.current_price = current_price
 		self.entered_symbol = symbol.strip()
