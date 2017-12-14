@@ -8,17 +8,32 @@ class Stock():
 		self.program_type = program_type
 		self.previous_price = previous_price
 		self.current_price = current_price
-		self.entered_symbol = symbol.strip()
+		self.entered_symbol = str(symbol).strip()
 		self.link = 'https://ca.finance.yahoo.com/chart/' + str(self.entered_symbol)
 		self.page = requests.get(self.link)
 		self.tree = html.fromstring(self.page.content)
 		self.stock_name = str(self.tree.xpath('//*[@id="chart-header"]/div[2]/div[1]/div[1]/h1/text()')[0])
 		
 	def scrape(self):
-		self.current_price = self.tree.xpath('//*[@id="chart-header"]/div[2]/div[2]/div/span[1]/text()') # Can't get "current" but can get the one beside it
-		
+		self.current_price = self.tree.xpath('//*[@id="chart-header"]/div[2]/div[2]/p/span[1]/text()')
 		self.current_price = float(self.current_price[0].replace(',',''))
-		return self.current_price
+
+		if (self.program_type == 'Tracker'):
+			return self.current_price
+		else:
+			info_list = {}
+			previous_close = float(self.tree.xpath('//*[@id="quote-summary"]/div[1]/table/tbody/tr[1]/td[2]/span/text()'))
+			market_cap = float(self.tree.xpath('//*[@id="quote-summary"]/div[2]/table/tbody/tr[1]/td[2]/span/text()'))
+			beta = float(self.tree.xpath('//*[@id="quote-summary"]/div[2]/table/tbody/tr[2]/td[2]/span/text()'))
+			forward_dividend = float(self.tree.xpath('//*[@id="quote-summary"]/div[2]/table/tbody/tr[6]/td[2]/text()'))
+			average_volume = float(self.tree.xpath('//*[@id="quote-summary"]/div[1]/table/tbody/tr[8]/td[2]/span/text()'))
+			info_list['Current Price: '] = (self.current_price)
+			info_list['Previous Close: '] = (previous_close)
+			info_list['Market Cap: '] = (market_cap)
+			info_list['Beta: '] = (beta)
+			info_list['Forward Dividend: '] = (forward_dividend)
+			info_list['Average Volume: '] = (average_volume)
+			return info_list
 
 	def get_current_price(self):
 		return self.current_price

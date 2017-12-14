@@ -9,7 +9,7 @@ class Tracker():
 
 	def __init__(self):
 		self.root = Tk()
-		self.root.title("Quote Tracker 5000!")
+		self.root.title("Quote Tracker 9000")
 		self.flag = True
 
 		self.time_window = self.time_window_init("Time started: " + str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
@@ -45,8 +45,8 @@ class Tracker():
 		self.delta_disp.grid(row=6, column=2)
 		
 
-		self.begin_button = self.begin_button_init()
-		self.end_button = self.end_button_init()
+		self.begin_button = self.begin_button_init(20)
+		self.end_button = self.end_button_init(20)
 
 	def init_stock_space(self, row_number, name):
 		self.stock_space = StringVar()
@@ -94,14 +94,14 @@ class Tracker():
 		w.grid(row=1, column=1, columnspan=1)
 		return 2
 
-	def begin_button_init(self):
+	def begin_button_init(self, row_number):
 		button = Button(self.root, text="Start", command=lambda: self.start())
-		button.grid(row=12, column=1, sticky=W)
+		button.grid(row=row_number, column=1, sticky=W, pady=15)
 		return button
 
-	def end_button_init(self):
+	def end_button_init(self, row_number):
 		button = Button(self.root, text="Stop", command=lambda: self.stop())
-		button.grid(row=12, column=1)
+		button.grid(row=row_number, column=1, pady=15)
 		return button
 
 	def write_to_time_window(self, text):
@@ -116,44 +116,51 @@ class Tracker():
 		self.flag = True
 		ticket_symbols = self.stocks_list.get()
 		interval = int(self.time_interval_var.get())
-		
 		ts = ticket_symbols.strip().split(",")
+		
 		if len(ts) > 1 and (self.program_type_var.get().upper().startswith("I")):
 			self.messages_to_user_var.set("You are in INFO mode, either enter one symbol or switch mode!")
 			self.root.update()
 			return
+		elif len(ts) == 1 and (self.program_type_var.get().upper().startswith("I")):
+			stock = Stock.Stock(ts, 0.0, 0.0, self.program_type_var.get())
+			stock_info = stock.scrape()
+			print(stock_info)
+
 		else:
 			self.messages_to_user_var.set("You are now in Tracker mode.")
 			self.program_type_var.set(self.programs[0])
-		
-		ts_dict = {}
-		count = 6
-		for symbol in ts:
-				count += 1
-				stock = Stock.Stock(symbol, 0.0, 0.0, self.program_type_var.get())
-				stock.scrape()
-				ts_dict[symbol] = stock
-				self.init_stock_space(count, stock.get_stock_name())
-				self.stock_space.set(stock.get_stock_name())
-				self.init_current_price(count, stock.get_current_price())
-				self.current_price.set(stock.get_current_price())
-				self.init_delta_price(count, '0.0')
-				self.delta_price.set('0.0')
+			if (len(ts)> 15):
+				self.messages_to_user_var.set("Please enter <= 15 max stocks to track!")
+				self.stocks_list.set(", ".join(ts[:15]))
+			else:
+				ts_dict = {}
+				count = 6
+				for symbol in ts:
+						count += 1
+						stock = Stock.Stock(symbol, 0.0, 0.0, self.program_type_var.get())
+						stock.scrape()
+						ts_dict[symbol] = stock
+						self.init_stock_space(count, stock.get_stock_name())
+						self.stock_space.set(stock.get_stock_name())
+						self.init_current_price(count, stock.get_current_price())
+						self.current_price.set(stock.get_current_price())
+						self.init_delta_price(count, '0.0')
+						self.delta_price.set('0.0')
+						self.root.update()
+						
 				self.root.update()
-				# Add onto GUI: Stock symbol on one side, and delta with red down/green up arrow on other side
 
-		self.root.update()
-
-		while (self.flag): # Implement "stop" button
-			time.sleep(interval)
-			self.write_to_time_window("Current time: " + str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
-			for symbol in ts_dict:
-				ts_dict[symbol].update()
-				self.current_price.set(stock.get_current_price())
-				self.set_delta_price(stock.get_delta())
-				self.root.update()
-			if (not self.flag):
-				break
+				while (self.flag): # Implement "stop" button
+					time.sleep(interval)
+					self.write_to_time_window("Current time: " + str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+					for symbol in ts_dict:
+						ts_dict[symbol].update()
+						self.current_price.set(stock.get_current_price())
+						self.set_delta_price(stock.get_delta())
+						self.root.update()
+					if (not self.flag):
+						break
 
 
 window = Tracker()
